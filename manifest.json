@@ -2,5 +2,21 @@
     "name": "Youtube Skippy",
     "version": "1.0",
     "description": "Tired of hearing the same song over and over again? Not anymore!",
-    "manifest_version": 2
+    "permissions": ["activeTab", "declarativeContent", "storage"],
+    "background": {
+     "scripts": ["background.js"],
+     "persistent": false
+    },
+    "content_scripts": [
+     {
+       "matches": ["*://*.youtube.com/*"],
+       "js": ["skipper.js"]
+     }
+   ],
+   "icons": {
+     "16": "img/skippy.png"
+   },
+   "web_accessible_resources": ["img/skippy.png"],
+   "options_page": "options.html",
+   "manifest_version": 2
 }
