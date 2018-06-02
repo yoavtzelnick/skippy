@@ -4,9 +4,11 @@ interval = setInterval(function() {
     currentLocation = window.location.href;
     chrome.storage.sync.get(["blacklisted"], function(result) {
       let blacklisted = result.blacklisted === undefined ? [] : result.blacklisted;
-      if (blacklisted.includes(currentLocation)) {
-        var next = document.getElementsByClassName("ytp-next-button")[0];
-        next.click();
+      for (let item of blacklisted) {
+        if (item.href == currentLocation) {
+          var next = document.getElementsByClassName("ytp-next-button")[0];
+          next.click();
+        }
       }
     });
   }
@@ -22,13 +24,19 @@ window.onload = function() {
   skip.onclick = function() {
     chrome.storage.sync.get(["blacklisted"], function(result) {
       var blacklisted = result.blacklisted === undefined ? [] : result.blacklisted;
-      if (!blacklisted.includes(currentLocation)) {
-        blacklisted.push(currentLocation);
-        chrome.storage.sync.set({"blacklisted": blacklisted}, function() {
-          var next = document.getElementsByClassName("ytp-next-button")[0];
-          next.click();
-        });
+      for (let item of blacklisted) {
+        if (item.href == currentLocation) {
+          return;
+        }
       }
+      blacklisted.push({
+        "title": document.title,
+        "href": currentLocation
+      });
+      chrome.storage.sync.set({"blacklisted": blacklisted}, function() {
+        var next = document.getElementsByClassName("ytp-next-button")[0];
+        next.click();
+      });
     });
   };
   title.append(skip);

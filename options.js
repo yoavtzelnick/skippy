@@ -1,22 +1,24 @@
-let page = document.getElementsByClassName('list-group')[0];
+let page = document.getElementsByClassName('collection')[0];
 function constructOptions() {
   page.innerHTML = "";
   chrome.storage.sync.get(["blacklisted"], function(result) {
     let blacklisted = result.blacklisted;
     for (let item of blacklisted) {
       let line = document.createElement('li');
-      line.classList.add("list-group-item");
-      line.innerHTML = item;
+      line.classList.add("collection-item");
+      line.innerHTML = item.title;
       let button = document.createElement('button');
-      button.classList.add('btn');
-      button.classList.add('btn-primary');
+      button.className = 'waves-effect waves-light red btn';
       button.style = "margin: 8px;";
       button.innerHTML = "Undo";
       button.addEventListener('click', function() {
         chrome.storage.sync.get("blacklisted", function(b) {
           b = b.blacklisted;
-          var index = b.indexOf(item);
-          if (index !== -1) b.splice(index, 1);
+          for (var i=0; i<b.length; i++) {
+            if (b[i].href == item.href) {
+              b.splice(i, 1);
+            }
+          }
           chrome.storage.sync.set({"blacklisted": b}, function() {
             constructOptions();
           })
